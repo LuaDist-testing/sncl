@@ -4,7 +4,11 @@ RegionBase_mt = {}
 RegionBase_mt.__index = RegionBase
 
 function RegionBase.new()
-	local regionBaseObject = {id = nil, importBase = {}, regions = {}}
+	local regionBaseObject = {
+		id = nil,
+		importBase = {},
+		regions = {}
+	}
 	setmetatable(regionBaseObject, RegionBase_mt)
 	return regionBaseObject
 end

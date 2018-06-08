@@ -1,5 +1,7 @@
 local utilsTable = {}
 
+hasError = false
+
 function utilsTable.isValidSncl(fileName)
 	local found = fileName:find(".sncl")
 	if found then
@@ -19,93 +21,98 @@ function utilsTable.conteudoArquivo(fileLocation)
 			return fileContent
 		end
 	end
-
 	print("Can't open file.")
 end
 
 function utilsTable.parse(gramatica, input)
 	lpeg.match(gramatica, input)
-	for pos, val in pairs(tabelaSimbolos.links) do
-		val:checkEnd()
-		val:createConnector()
-	end
-	for pos, val in pairs(tabelaSimbolos.body) do
-		if val:getType() == "media" then
-			val:pointRegion()
-			val:createDescriptor()
-		end
-	end
 end
 
-function utilsTable.printErro(string, linha)
-	if string ~= nil then
-		print(ansicolors.red.."ERRO:linha "..linha..": "..string..ansicolors.reset)
-	end
+function utilsTable.printErro(string)
+	print("ERRO: "..string.." Linha: "..linha-1)
+	hasError = true
 end
 
 function utilsTable.printAviso(string, linha)
 	if string ~= nil then
-		print(ansicolors.yellow.."AVISO:linha "..linha..": "..string..ansicolors.reset)
+		print("AVISO: linha "..linha..": "..string)
 	end
 end
 
-function utilsTable.printNCL(t)
+function utilsTable.printNCL()
+	local indent = "\n   "
 	local NCL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
 	NCL = NCL.."\n<ncl id=\"main\" xmlns=\"http://www.ncl.org.br/NCL3.0/EDTVProfile\">"
-	NCL = NCL.."\n\t<head>"
-
-	-- Regions --
-	local Regions = ""
-	for pos, val in pairs(t.regions) do
-		if val:getPrint() then
-			Regions = Regions..val:toNCL("\t\t\t")
+	
+	local body = indent.."<body>"
+	for pos, val in pairs(tabelaSimbolos.body) do
+		if val:getFather() == nil then
+			body = body..val:toNCL(indent.."   ")
 		end
 	end
-	if Regions ~= "" then
-		NCL = NCL.."\n\t\t<regionBase>"
-		NCL = NCL..Regions
-		NCL = NCL.."\n\t\t</regionBase>"
-	end
+	body = body..indent.."</body>\n</ncl>"
 
-	--Descriptors --
-	local Descriptors = ""
-	for pos, val in pairs(t.descriptors) do
-		Descriptors = Descriptors..val:toNCL("\t\t\t")
-	end
-	if Descriptors ~= "" then
-		NCL = NCL.."\n\t\t<descriptorBase>"
-		NCL = NCL..Descriptors
-		NCL = NCL.."\n\t\t</descriptorBase>"
-	end
+	local head = indent.."<head>"
 
-	-- Connectors --
-	local Connectors = ""
-	for pos, val in pairs(t.connectors) do
-		Connectors = Connectors..val:toNCL("\t\t\t")
-	end
-
-	if Connector ~= "" then
-		NCL = NCL.."\n\t\t<connectorBase>"
-		NCL = NCL..Connectors
-		NCL = NCL.."\n\t\t</connectorBase>"
-	end
-	-- Medias, Contexts, Areas
-	NCL = NCL.."\n\t</head>\n\n\t<body>"
-	for pos, val in pairs(t.body) do
-		if val:getPrint() == true then
-			NCL = NCL..val:toNCL("\t\t")
+	local regionBase = indent.."   <regionBase>"
+	local i = 0
+	for pos, val in pairs(tabelaSimbolos.regions) do
+		i = i+1
+		if val:getFather() == nil then
+			regionBase = regionBase..val:toNCL(indent.."      ")
 		end
 	end
-
-	NCL = NCL.."\n"
-	-- Links fora de contexts
-	for pos, val in pairs(t.links) do
-		NCL = NCL..val:toNCL("\t\t")
+	regionBase = regionBase..indent.."   </regionBase>"
+	if i ~= 0 then
+		head = head..regionBase
 	end
 
-	NCL = NCL.."\n\n\t</body>\n</ncl>"
+	local descriptorBase = indent.."   <descriptorBase>"
+	local i = 0
+	for pos, val in pairs(tabelaSimbolos.descriptors) do
+		i = i+1
+		descriptorBase = descriptorBase..val:toNCL(indent.."      ")
+	end
+	descriptorBase = descriptorBase..indent.."   </descriptorBase>"
+	if i ~= 0 then
+		head = head..descriptorBase
+	end
+
+	local connectorBase = indent.."   <connectorBase>"
+	local i = 0
+	for pos, val in pairs(tabelaSimbolos.connectors) do
+		i = i+1
+		connectorBase = connectorBase..val:toNCL(indent.."      ")
+	end
+	connectorBase = connectorBase..indent.."   </connectorBase>"
+	if i ~= 0 then
+		head = head..connectorBase
+	end
+
+	head = head..indent.."</head>"
+
+	NCL = NCL..head..body
 	return NCL
 end
 
+function utilsTable.containsKey(table, key)
+	for pos, __ in pairs(table) do
+		if pos == key then
+			return true
+		end
+	end
+	return false
+end
+
+function utilsTable.containsValue(table, value)
+	for __,val in pairs(table) do
+		if val == value then
+			return true
+		end
+	end
+	return false
+end
+
 return utilsTable
+
 

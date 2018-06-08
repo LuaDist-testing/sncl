@@ -4,7 +4,12 @@ ImportBase_mt = {}
 ImportBase_mt.__index = ImportBase
 
 function ImportBase.new()
-	local importBaseObject = {alias = nil, documentURI = nil, region = nil, baseId = nil}
+	local importBaseObject = {
+		alias = nil,
+		documentURI = nil,
+		region = nil,
+		baseId = nil
+	}
 	setmetatable(importBaseObject, ImportBase_mt)
 	return importBaseObject
 end

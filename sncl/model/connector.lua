@@ -3,127 +3,107 @@ Connector_mt = {}
 
 Connector_mt.__index = Connector
 
-function Connector.new()
-	local connectorObject = {id = nil, conditions = {}, actions = {}, params = {}, condParam = false, actionParam = false}
+function Connector.new(id)
+	local connectorObject = {
+		id = id,
+		conditionParam = false,
+		actionParam = false,
+		nConditions = 0,
+		nActions = 0,
+		conditions = {},
+		actions = {},
+		params = {},
+	}
 	setmetatable(connectorObject, Connector_mt)
 	return connectorObject
 end
 
-function Connector:setId()
-	local Id = ""
+function Connector:setNConditions (n)
+	self.nConditions = n
+end
+function Connector:setNActions (n)
+	self.nActions = n
+end
+function Connector:setConditionParam (bool)
+	self.conditionParam = bool
+end
+function Connector:setActionParam (bool)
+	self.actionParam = bool
+end
+function Connector:addLinkParam (name)
+	self.params[name] = true
+end
+function Connector:getId() return self.id end
 
-	for pos, val in pairs(self.conditions) do
-		Id = Id..pos
-		if val > 1 then
-			Id = Id.."N"
-		end
-	end
-	
-	for pos, val in pairs(self.actions) do
-		Id = Id..pos
-		if val.count > 1 then
-			Id = Id.."N"
-		end
-	end
-
-	self.id = Id
+function Connector:addConditions(conditions)
+	table.insert(self.conditions, conditions)
 end
 
-function Connector:getId()
-	return self.id
-end
-
-function Connector:addCondition(condition)
-	if self.conditions[condition] then
-		self.conditions[condition] = self.conditions[condition]+1
-	else
-		self.conditions[condition] = 1
-	end
-end
-
-function Connector:addAction(action, params)
-	if self.actions[action] then
-		self.actions[action].count = self.actions[action].count+1
-		if params then
-			self.actions[action].params = params
-		end
-	else
-		self.actions[action] = {}
-		self.actions[action].count = 1
-	end
-end
-
-function Connector:addConditionParam(param)
-	self.condParam = true
-end
-
-function Connector:addActionParam(param)
-	self.actionParam = true
+function Connector:addActions(actions)
+	table.insert(self.actions, actions)
 end
 
 function Connector:toNCL(indent)
-	local NCL = "\n"..indent.."<causalConnector id=\""..self.id.."\">\n"
+	local connector = indent.."<causalConnector id=\""..self.id.."\">"
 
-	--[[
 	for pos, val in pairs(self.params) do
-		NCL = NCL.."\n"..indent.."<connectorParam name=\""..pos.."\""
+		connector = connector..indent.."   <connectorParam name=\""..pos.."\" />"
 	end
-	]]
-	if self.condParam then
-		NCL = NCL.."\n"..indent.."\t<connectorParam name=\"keyCode\" />"
+	if self.conditionParam then
+		connector = connector..indent.."   <connectorParam name=\"conditionVar\" />"
 	end
-
 	if self.actionParam then
-		NCL = NCL.."\n"..indent.."\t<connectorParam name=\"var\" />"
+		connector = connector..indent.."   <connectorParam name=\"actionVar\" />"
 	end
-
-
-	local conditionsTable = {}
-	for pos, val in pairs(self.conditions) do
-		local condition =indent.."\t<simpleCondition role=\""..pos.."\""
-		if self.condParam then
-			condition = condition.." key=\"$keyCode\""
-		end
-		if val > 1 then
-			condition = condition.." max=\"unbounded\" qualifier=\"seq\""
-		end
-		condition = condition.."/>"
-		table.insert(conditionsTable, condition)
-	end
-
-	if #conditionsTable > 1 then
-		NCL = NCL..indent.."\t<compoundCondition operator=\"and\" >"
-		for pos, val in pairs(conditionsTable) do
-			NCL = NCL.."\n\t"..val
-		end
-		NCL = NCL.."\n"..indent.."\t</compoundCondition>"
+	local conditionString
+	local newIndent
+	if self.nConditions > 1 then
+		conditionString = indent.."   <compoundCondition operator=\"and\">"
+		newIndent = indent.."   "
 	else
-		NCL = NCL..conditionsTable[1].."\n"
+		conditionString = ""
+		newIndent = indent
 	end
-
-	local actionsTable = {}
-	for pos, val in pairs(self.actions) do
-		local action = indent.."\t<simpleAction role=\""..pos.."\""
-		if val.count > 1 then
-			action = action.." max=\"unbounded\" qualifier=\"seq\""
-		end
-		if val.params then
-			for i, j in pairs(val.params) do
-				action = action.." "..i.."=\""..j.."\""
+	for __, j in pairs(self.conditions) do
+		for pos, val in pairs(j) do
+			conditionString = conditionString..newIndent.."   <simpleCondition role=\""..pos.."\""
+			if val.times > 1 then
+				conditionString  = conditionString.." max=\"unbounded\" qualifier=\"par\""
 			end
+			conditionString = conditionString.."/>"
 		end
-		action = action.." />"
-		table.insert(actionsTable, action)
 	end
-	if #actionsTable > 1 then
-		NCL = NCL..indent.."\t<compoundAction operator=\"seq\" >"
-		for pos, val in pairs(actionsTable) do
-			NCL = NCL.."\n\t"..val
-		end
-		NCL = NCL.."\n"..indent.."\t</compoundAction>"
+	if self.nConditions > 1 then
+		conditionString = conditionString..indent.."   </compoundCondition>"
+	end
+		
+	connector = connector..conditionString
+
+	local conditionString
+	local newIndent
+	if self.nActions > 1 then
+		actionString = indent.."   <compoundActions operator=\"seq\">"
+		newIndent = indent.."   "
 	else
-		NCL = NCL..actionsTable[1]
+		actionString = ""
+		newIndent = indent
 	end
-	NCL = NCL.."\n"..indent.."</causalConnector>"
-	return NCL
+	for __, j in pairs(self.actions) do
+		for pos, val in pairs(j) do
+			actionString = actionString..newIndent.."   <simpleAction role=\""..pos.."\""
+			if val.times > 1 then
+				actionString  = actionString.." max=\"unbounded\" qualifier=\"par\""
+			end
+			actionString = actionString.."/>"
+		end
+	end
+	if self.nActions > 1 then
+		actionString = actionString..indent.."   </compoundAction>"
+	end
+		
+	connector = connector..actionString
+
+
+	connector = connector..indent.."</causalConnector>"
+	return connector
 end

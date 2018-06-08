@@ -1,11 +1,11 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "sncl"
-version = "0.1-0"
+version = "0.2-0"
 
 -- LuaDist source
 source = {
-  tag = "0.1-0",
+  tag = "0.2-0",
   url = "git://github.com/LuaDist-testing/sncl.git"
 }
 -- Original source
@@ -37,7 +37,7 @@ build = {
 		["sncl.sncl"] = "sncl/sncl.lua",
 		["sncl.utils.utils"] = "sncl/utils/utils.lua",
 		["sncl.grammar.grammar_parser"] = "sncl/grammar/grammar_parser.lua",
-		["sncl.grammar.grammar_scan"] = "sncl/grammar/grammar_scan.lua",
+		["sncl.grammar.grammar_scan"] = "sncl/grammar/util_parse.lua",
 		["sncl.model.media"] = "sncl/model/media.lua",
 		["sncl.model.connector"] = "sncl/model/connector.lua",
 		["sncl.model.context"] = "sncl/model/context.lua",
@@ -46,6 +46,7 @@ build = {
 		["sncl.model.area"] = "sncl/model/area.lua",
 		["sncl.model.region"] = "sncl/model/region.lua",
 		["sncl.model.regionBase"] = "sncl/model/regionBase.lua",
+		["sncl.model.action"] = "sncl/model/action.lua",
 	},
 	install = {
 		bin = {"bin/sncl"}

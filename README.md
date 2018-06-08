@@ -1,6 +1,11 @@
 # sNCL
-Repositório público para a DSL sNCL
+sNCL é uma DSL que facilita a autoria de aplicacões multimídia que compila para NCL.
 
 ## Requerimentos:
-Lua
-Plugins do luarocks:  lpeg e luafilesystem  
+* [Lua](https://www.lua.org/)
+* [LuaRocks](https://luarocks.org/)
+ 
+## Instalacão:
+``` bash
+# luarocks install lpeg
+```

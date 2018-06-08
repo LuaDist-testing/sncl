@@ -4,7 +4,7 @@ local Cg, Ct, C = lpeg.Cg, lpeg.Ct, lpeg.C
 
 local SPC = V"Espacos"
 
-currentElement = nil
+local currentElement = nil
 
 snclGrammar = {
 	"INICIAL";
@@ -26,6 +26,7 @@ snclGrammar = {
 
 	End = (P"end" *(SPC)^0)
 	/function()
+		print("end of "..currentElement:getType())
 		if currentElement ~= nil then
 			currentElement:setEnd(true)
 			if currentElement:getFather() == nil then
@@ -184,7 +185,10 @@ snclGrammar = {
 	/function(str)
 		parseLinkActionParam(str)
 	end,
-	Action = ( V"ActionMedia"*V"ActionParam"^0 *V"End"^-1),
+	Action = ( V"ActionMedia"*V"ActionParam"^0 *V"End"^-1) 
+	/function(str)
+		--print("Action:\n"..str)
+	end,
 	------ ACTION ------
 
 	------ LINK ------
@@ -198,10 +202,14 @@ snclGrammar = {
 	end,
 	LinkParam = (V"AlphaNumeric"^1 *V"OnlyEspace"^0* P"=" *V"OnlyEspace"^0* P"\""* V"AlphaNumericSpace"^-1 *P"\""* SPC^0)
 	/function(str)
+		str = str:gsub("%s+", "")
 		parseLinkConditionParam(str)
 		--print("LinkParam: "..str)
 	end,
-	Link = (V"LinkDo" *(V"Action"+V"LinkParam")^0 *V"End"^-1),
+	Link = (V"LinkDo" *(V"Action"+V"LinkParam")^0 *V"End"^-1) 
+	/function(str)
+		--print("Link: "..str)
+	end,
 	------ LINK ------
 
 	-- START --

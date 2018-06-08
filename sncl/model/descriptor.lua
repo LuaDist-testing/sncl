@@ -3,34 +3,25 @@ Descriptor_mt = {}
 
 Descriptor_mt.__index = Descriptor
 
-function Descriptor.new()
-	local descriptorObject = {id = nil, region = nil, params = {}}
+function Descriptor.new(id)
+	local descriptorObject = {
+		id = id,
+		region = nil,
+		properties = {}
+	}
 	setmetatable(descriptorObject, Descriptor_mt)
 	return descriptorObject
 end
 
 -- Setters
-function Descriptor:setId(id)
-	self.id = id
-end
-
-function Descriptor:setRegion(region)
-	self.region = region
-end
-
--- Add
+function Descriptor:setId(id) self.id = id end
+function Descriptor:setRegion(region) self.region = region end
 
 --Getters
-function Descriptor:getId()
-	return self.id
-end
+function Descriptor:getId() return self.id end
 
 function Descriptor:toNCL(indent)
-	NCL = "\n"..indent.."<descriptor id=\""..self.id.."\""
-	NCL = NCL.." region=\""..self.region:getId().."\" />"
-
-	for pos, val in pairs(self.params) do
-	end
-
+	NCL = indent.."<descriptor id=\""..self.id.."\""
+	NCL = NCL.." region=\""..self.region.."\" />"
 	return NCL
 end

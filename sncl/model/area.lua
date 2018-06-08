@@ -2,51 +2,42 @@ Area = {}
 Area_mt = {}
 
 Area_mt.__index = Area
-
-local areaProperties = { "begin", "end", "first","last", "text", "positon", 
-	"coords", "label", "clip" }
-
-function Area.new()
-	local areaObject = {id = nil, properties = {}, _print = false, _end=nil}
+function Area.new(id)
+	local areaObject = {
+		id = id,
+		father = false,
+		hasEnd = false,
+		properties = {},
+	}
 	setmetatable(areaObject, Area_mt)
 	return areaObject
 end
 
---Setters
-function Area:setId(id) self.id = id end
-function Area:addProperty(property, value)
-	if self:checkProperty(property) then
-		self.properties[property] = value
-	else
-		utils.printErro(property..' invalido', linha)
-	end
-end
-
 --Getters
 function Area:getId() return self.id end
-function Area:getAttributes() return self.properties end
+function Area:getProperties() return self.properties end
 function Area:getType() return "area" end
-function Area:getPrint() return self._print end
+function Area:getFather() return self.father end
+function Area:getEnd() return self.hasEnd end
 
---Checagens
-function Area:checkProperty(property)
-	for pos, val in pairs(areaProperties) do
-		if val == property then
-			return true
-		end
-	end
-	return false
+--Setters
+function Area:setId(id) self.id = id end
+function Area:setFather(father) self.father = father end
+function Area:setEnd (bool) self.hasEnd = bool end
+
+function Area:addProperty(name, value)
+	self.properties[name] = value
 end
-
 
 -- Gerador de NCL
 function Area:toNCL(indent)
-	NCL = "\n"..indent.."<area id=\""..self.id.."\" "
-	for pos, val in pairs(self.properties) do
-		NCL = NCL..pos.."=".."\""..val.."\""
-	end
-	NCL = NCL.."/>"
-	return NCL
-end
+	local newNCL = indent.."<area id=\""..self.id.."\">"
 
+	for pos,val in pairs(self.properties) do
+		newNCL = newNCL..indent.."   <property name=\""..pos.."\" value="..val.."/>"
+	end
+	newNCL = newNCL..indent.."</area>"
+
+	return newNCL
+end
 

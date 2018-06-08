@@ -1,11 +1,11 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "sncl"
-version = "0.2-2"
+version = "0.2-3"
 
 -- LuaDist source
 source = {
-  tag = "0.2-2",
+  tag = "0.2-3",
   url = "git://github.com/LuaDist-testing/sncl.git"
 }
 -- Original source
@@ -38,15 +38,20 @@ build = {
 		["sncl.utils.utils"] = "sncl/utils/utils.lua",
 		["sncl.grammar.grammar_parser"] = "sncl/grammar/grammar_parser.lua",
 		["sncl.grammar.util_parse"] = "sncl/grammar/util_parse.lua",
-		["sncl.model.media"] = "sncl/model/media.lua",
-		["sncl.model.connector"] = "sncl/model/connector.lua",
-		["sncl.model.context"] = "sncl/model/context.lua",
+
 		["sncl.model.descriptor"] = "sncl/model/descriptor.lua",
-		["sncl.model.link"] = "sncl/model/link.lua",
-		["sncl.model.area"] = "sncl/model/area.lua",
+		["sncl.model.connector"] = "sncl/model/connector.lua",
 		["sncl.model.region"] = "sncl/model/region.lua",
-		["sncl.model.regionBase"] = "sncl/model/regionBase.lua",
+
+		["sncl.model.port"] = "sncl/model/port.lua",
+
+		["sncl.model.context"] = "sncl/model/context.lua",
+		["sncl.model.media"] = "sncl/model/media.lua",
+		["sncl.model.area"] = "sncl/model/area.lua",
+
+		["sncl.model.link"] = "sncl/model/link.lua",
 		["sncl.model.action"] = "sncl/model/action.lua",
+		["sncl.model.condition"] = "sncl/model/condition.lua",
 	},
 	install = {
 		bin = {"bin/sncl"}

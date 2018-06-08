@@ -1,9 +1,17 @@
+-- This file was automatically generated for the LuaDist project.
+
 package = "sncl"
 version = "1.0-0"
 
+-- LuaDist source
 source = {
-   url = "git://github.com/TeleMidia-MA/sncl.git"
+  tag = "1.0-0",
+  url = "git://github.com/LuaDist-testing/sncl.git"
 }
+-- Original source
+-- source = {
+--    url = "git://github.com/TeleMidia-MA/sncl.git"
+-- }
 
 description = {
    summary = "A tool that compiles sncl code to ncl",
@@ -47,5 +55,4 @@ build = {
       }
    }
 }
-
 

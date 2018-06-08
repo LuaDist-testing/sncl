@@ -1,0 +1,3 @@
+onBegin media1 do
+	start media2
+endLink

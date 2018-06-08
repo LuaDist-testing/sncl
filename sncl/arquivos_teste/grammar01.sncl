@@ -1,0 +1,56 @@
+onBegin grdP1 onEnd grdP2 do
+	set grdP1/bounds 20%,30%,50%,60%
+	set setNode/fullScreen true
+		delay = 5s
+	endAction
+	start media2
+		delay = 10s
+	endAction
+	set setNode/inicioOutBack false
+endLink
+
+onSelection/YELLOW grdP1 do
+	start grdP2
+endLink
+
+media grdP1
+	type = text/html
+	area bounds end
+end
+
+region region11
+	width=100%
+	region region21
+		region region31
+			left = 10
+		end
+		region region32
+			right= 20
+		end
+		left =10
+	end
+	region region22
+		height = 10%
+	end
+end
+
+media grdP2
+	type = text/html
+	region = region22
+	left = 10
+end
+
+context context1
+end
+
+media setNode
+	type = text/html
+	area fullScreen 
+		begin = 5s
+	end
+	area inicioOutBack end
+end
+
+media media2
+	type=text/html
+end

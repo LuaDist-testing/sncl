@@ -1,11 +1,11 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "sncl"
-version = "0.3-1"
+version = "0.3-2"
 
 -- LuaDist source
 source = {
-  tag = "0.3-1",
+  tag = "0.3-2",
   url = "git://github.com/LuaDist-testing/sncl.git"
 }
 -- Original source

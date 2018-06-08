@@ -1,0 +1,23 @@
+#!/usr/bin/env lua
+
+require("main")
+
+local argparse = require("argparse")
+
+local parser = argparse() {
+   name = "sncl",
+   description = "A sNCl compiler to NCL",
+}
+
+parser:argument("input", "sNCL Input File")
+   :args(1)
+parser:option("-o --output", "Set the output NCL file")
+   :overwrite(false)
+parser:option("-t --template", "Set the template file")
+   :overwrite(false)
+parser:flag("-p --play", "Play the file in ginga")
+parser:flag("-s --show_symbol", "Print the generated symbol table")
+
+local args = parser:parse()
+
+beginParse(args)
